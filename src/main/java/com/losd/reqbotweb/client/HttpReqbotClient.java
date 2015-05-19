@@ -4,9 +4,12 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import com.losd.reqbotweb.config.ReqbotClientConfiguration;
+import com.losd.reqbotweb.exception.ReqbotWebException;
 import com.losd.reqbotweb.model.ReqbotRequest;
 import com.losd.reqbotweb.model.Response;
 import org.apache.http.client.fluent.Request;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -41,24 +44,27 @@ import java.util.List;
  */
 @Component
 public class HttpReqbotClient implements ReqbotClient {
+    Logger logger = LoggerFactory.getLogger(HttpReqbotClient.class);
     @Autowired
     ReqbotClientConfiguration config;
 
     @Override
     public List<String> getBuckets() {
-        List<String> buckets = new LinkedList<>();
+        List<String> buckets;
 
         try {
             String result = Request.Get(config.getUrl() + "/buckets").execute().returnContent().asString();
             Gson gson = new GsonBuilder().serializeNulls().create();
 
-            Type listType = new TypeToken<LinkedList<String>>() {}.getType();
+            Type listType = new TypeToken<LinkedList<String>>() {
+            }.getType();
 
             buckets = gson.fromJson(result, listType);
-
-        } finally {
-            return buckets;
+        } catch (Exception e) {
+            logger.error("Error getting buckets", e);
+            throw new ReqbotWebException(e);
         }
+        return buckets;
     }
 
     @Override
@@ -69,10 +75,13 @@ public class HttpReqbotClient implements ReqbotClient {
             String result = Request.Get(config.getUrl() + "/buckets/" + bucket).execute().returnContent().asString();
             Gson gson = new GsonBuilder().serializeNulls().create();
 
-            Type listType = new TypeToken<LinkedList<ReqbotRequest>>() {}.getType();
+            Type listType = new TypeToken<LinkedList<ReqbotRequest>>() {
+            }.getType();
 
             requests = gson.fromJson(result, listType);
 
+        } catch (Exception e) {
+            throw new RuntimeException("Error getting requests for bucket");
         } finally {
             return requests;
         }

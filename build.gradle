@@ -7,7 +7,6 @@ buildscript {
     }
 }
 
-
 apply plugin: 'java'
 apply plugin: 'spring-boot'
 apply plugin: 'findbugs'
@@ -31,13 +30,14 @@ dependencies {
     compile 'org.springframework.boot:spring-boot-starter-web'
     compile 'org.springframework.boot:spring-boot-starter-thymeleaf'
     compile 'com.google.guava:guava:18.0'
-    //compile 'org.apache.httpcomponents:httpclient:4.4.1'
     compile 'org.apache.httpcomponents:fluent-hc:4.4.1'
+    compile 'org.javassist:javassist:3.19.0-GA'
 
     testCompile 'org.springframework.boot:spring-boot-starter-test'
     testCompile 'uk.co.modular-it:hamcrest-date:0.9.5'
     testCompile 'commons-lang:commons-lang:2.6'
     testCompile 'org.cthul:cthul-matchers:1.1.0'
+    testCompile 'com.github.tomakehurst:wiremock:1.55'
 }
 
 task wrapper(type: Wrapper) {

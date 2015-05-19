@@ -1,10 +1,10 @@
 package com.losd.reqbotweb.client;
 
+import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import com.losd.reqbotweb.config.ReqbotClientConfiguration;
-import com.losd.reqbotweb.model.ReqbotRequest;
-import com.losd.reqbotweb.test.IntegrationTest;
+import com.losd.reqbotweb.exception.ReqbotWebException;
+import org.junit.Rule;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -12,9 +12,11 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.List;
 
+import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.greaterThan;
-import static org.hamcrest.core.Is.is;
+import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
+import static org.hamcrest.Matchers.contains;
+import static com.github.tomakehurst.wiremock.client.WireMock.*;
 
 /**
  * The MIT License (MIT)
@@ -41,20 +43,34 @@ import static org.hamcrest.core.Is.is;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = {ReqbotClientConfiguration.class, HttpReqbotClient.class})
-@Category(IntegrationTest.class)
 public class ReqbotClientTest {
+    @Rule
+    public WireMockRule wireMockRule = new WireMockRule(8080);
+
     @Autowired
-    ReqbotClient client;
+    HttpReqbotClient client;
 
     @Test
-    public void it_can_get_a_list_of_buckets() throws Exception {
-        List<String> buckets = client.getBuckets();
-        assertThat(buckets.size(), is(greaterThan(0)));
+    public void it_gets_a_list_of_buckets() throws Exception {
+        stubFor(get(urlEqualTo("/buckets"))
+                .willReturn(
+                        aResponse().withStatus(200)
+                                .withHeader("Content-Type", "application/json")
+                                .withBody("[\"aa\",\"bb\",\"cc\",\"dd\"]")));
+
+        List<String> result =  client.getBuckets();
+        assertThat(result, hasSize(4));
+        assertThat(result, contains("aa", "bb", "cc", "dd"));
+
+        verify(getRequestedFor(urlMatching("/buckets")));
     }
 
-    @Test
-    public void it_can_get_the_requests_for_a_bucket() throws Exception {
-        List<ReqbotRequest> requests = client.getByBucket("andrew");
-        assertThat(requests.size(), is(greaterThan(0)));
+    @Test(expected = ReqbotWebException.class)
+    public void it_handles_a_bad_request_when_getting_a_list_of_buckets() throws Exception {
+        stubFor(get(urlEqualTo("/buckets"))
+                .willReturn(
+                        aResponse().withStatus(500).withBody("Server Error")));
+
+        client.getBuckets();
     }
 }
