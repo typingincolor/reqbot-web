@@ -75,4 +75,16 @@ public class ReqbotClientTest {
 
         client.getBuckets();
     }
+
+    @Test
+    public void it_handles_a_404_when_there_are_no_buckets() throws Exception {
+        stubFor(get(urlEqualTo("/buckets"))
+                .willReturn(
+                        aResponse().withStatus(404).withBody("Not Found")));
+
+        List<String> result = client.getBuckets();
+
+        assertThat(result, hasSize(0));
+        verify(getRequestedFor(urlMatching("/buckets")));
+    }
 }

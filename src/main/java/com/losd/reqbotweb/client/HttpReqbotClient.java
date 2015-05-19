@@ -8,6 +8,8 @@ import com.losd.reqbotweb.config.ReqbotClientConfiguration;
 import com.losd.reqbotweb.exception.ReqbotWebException;
 import com.losd.reqbotweb.model.ReqbotRequest;
 import com.losd.reqbotweb.model.Response;
+import org.apache.http.HttpStatus;
+import org.apache.http.client.HttpResponseException;
 import org.apache.http.client.fluent.Request;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Type;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -49,7 +52,7 @@ public class HttpReqbotClient implements ReqbotClient {
 
     @Override
     public List<String> getBuckets() {
-        List<String> buckets;
+        List<String> buckets = null;
 
         try {
             String result = Request.Get(config.getUrl() + "/buckets").execute().returnContent().asString();
@@ -59,7 +62,14 @@ public class HttpReqbotClient implements ReqbotClient {
             }.getType();
 
             buckets = gson.fromJson(result, listType);
-        } catch (Exception e) {
+        }
+        catch (HttpResponseException responseException) {
+            if (responseException.getStatusCode() == HttpStatus.SC_NOT_FOUND) {
+                buckets = Collections.emptyList();
+            }
+            else throw new ReqbotWebException(responseException);
+        }
+        catch (Exception e) {
             logger.error("Error getting buckets", e);
             throw new ReqbotWebException(e);
         }
@@ -79,7 +89,8 @@ public class HttpReqbotClient implements ReqbotClient {
 
             requests = gson.fromJson(result, listType);
 
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             logger.error("Error getting requests for bucket", e);
             throw new ReqbotWebException(e);
         }
