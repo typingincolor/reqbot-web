@@ -27,10 +27,12 @@ configurations {
 }
 
 dependencies {
-    compile 'org.slf4j:slf4j-api:1.7.12'
+    compile 'com.google.code.gson:gson:2.3.1'
     compile 'org.springframework.boot:spring-boot-starter-web'
     compile 'org.springframework.boot:spring-boot-starter-thymeleaf'
     compile 'com.google.guava:guava:18.0'
+    //compile 'org.apache.httpcomponents:httpclient:4.4.1'
+    compile 'org.apache.httpcomponents:fluent-hc:4.4.1'
 
     testCompile 'org.springframework.boot:spring-boot-starter-test'
     testCompile 'uk.co.modular-it:hamcrest-date:0.9.5'
@@ -40,4 +42,20 @@ dependencies {
 
 task wrapper(type: Wrapper) {
     gradleVersion = '2.4'
+}
+
+test {
+    useJUnit {
+        excludeCategories 'com.losd.reqbotweb.test.IntegrationTest'
+    }
+}
+
+task integrationTest(type: Test) {
+
+}
+
+integrationTest {
+    useJUnit {
+        includeCategories 'com.losd.reqbotweb.test.IntegrationTest'
+    }
 }

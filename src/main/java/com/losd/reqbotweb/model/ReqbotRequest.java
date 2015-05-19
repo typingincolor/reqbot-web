@@ -31,7 +31,7 @@ import java.util.UUID;
  * THE SOFTWARE.
  */
 @SuppressWarnings("all")
-public class Request {
+public class ReqbotRequest {
     private String bucket;
     private Map<String, String> headers;
     private String body;
@@ -41,12 +41,12 @@ public class Request {
     private UUID uuid;
     private String path;
 
-    private Request(String bucket,
-                   Map<String, String> headers,
-                   String body,
-                   Map<String, String> queryParameters,
-                   String method,
-                   String path
+    private ReqbotRequest(String bucket,
+                          Map<String, String> headers,
+                          String body,
+                          Map<String, String> queryParameters,
+                          String method,
+                          String path
     )
     {
         this.bucket = bucket;
@@ -108,8 +108,8 @@ public class Request {
             return this;
         }
 
-        public Request build() {
-            return new Request(bucket, headers, body, queryParameters, method, path);
+        public ReqbotRequest build() {
+            return new ReqbotRequest(bucket, headers, body, queryParameters, method, path);
         }
     }
 

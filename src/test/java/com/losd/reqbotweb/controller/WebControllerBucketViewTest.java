@@ -1,7 +1,7 @@
 package com.losd.reqbotweb.controller;
 
 import com.losd.reqbotweb.client.ReqbotClient;
-import com.losd.reqbotweb.model.Request;
+import com.losd.reqbotweb.model.ReqbotRequest;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -60,14 +60,14 @@ public class WebControllerBucketViewTest {
 
     @Test
     public void it_populates_the_bucket_list_correctly() throws Exception {
-        List<Request> requestList = new ArrayList<>();
+        List<ReqbotRequest> requestList = new ArrayList<>();
         Map<String, String> headers = new HashMap<>();
         headers.put("header1", "value1");
 
         Map<String, String> queryParams = new HashMap<>();
         queryParams.put("param1", "value1");
 
-        requestList.add(new Request.Builder()
+        requestList.add(new ReqbotRequest.Builder()
                 .bucket("a")
                 .headers(headers)
                 .body("body")
