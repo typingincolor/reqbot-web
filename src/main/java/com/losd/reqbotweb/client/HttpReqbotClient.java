@@ -1,5 +1,6 @@
 package com.losd.reqbotweb.client;
 
+import com.google.common.collect.ImmutableList;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
@@ -16,8 +17,6 @@ import org.springframework.stereotype.Component;
 import java.lang.reflect.Type;
 import java.util.LinkedList;
 import java.util.List;
-
-//import com.losd.reqbotweb.model.Request;
 
 /**
  * The MIT License (MIT)
@@ -64,7 +63,7 @@ public class HttpReqbotClient implements ReqbotClient {
             logger.error("Error getting buckets", e);
             throw new ReqbotWebException(e);
         }
-        return buckets;
+        return ImmutableList.copyOf(buckets);
     }
 
     @Override
@@ -85,7 +84,7 @@ public class HttpReqbotClient implements ReqbotClient {
             throw new ReqbotWebException(e);
         }
 
-        return requests;
+        return ImmutableList.copyOf(requests);
     }
 
     @Override
