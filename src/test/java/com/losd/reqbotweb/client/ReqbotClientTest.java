@@ -3,6 +3,7 @@ package com.losd.reqbotweb.client;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import com.losd.reqbotweb.config.ReqbotClientConfiguration;
 import com.losd.reqbotweb.exception.ReqbotWebException;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -12,11 +13,11 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.List;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
-import static org.hamcrest.Matchers.contains;
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
+
 
 /**
  * The MIT License (MIT)
@@ -45,6 +46,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.*;
 @ContextConfiguration(classes = {ReqbotClientConfiguration.class, HttpReqbotClient.class})
 public class ReqbotClientTest {
     @Rule
+    @SuppressFBWarnings("URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public WireMockRule wireMockRule = new WireMockRule(8080);
 
     @Autowired

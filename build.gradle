@@ -38,6 +38,7 @@ dependencies {
     testCompile 'commons-lang:commons-lang:2.6'
     testCompile 'org.cthul:cthul-matchers:1.1.0'
     testCompile 'com.github.tomakehurst:wiremock:1.55'
+    testCompile 'com.google.code.findbugs:findbugs:3.0.1'
 }
 
 task wrapper(type: Wrapper) {
@@ -57,5 +58,12 @@ task integrationTest(type: Test) {
 integrationTest {
     useJUnit {
         includeCategories 'com.losd.reqbotweb.test.IntegrationTest'
+    }
+}
+
+tasks.withType(FindBugs) {
+    reports {
+        xml.enabled = false
+        html.enabled = true
     }
 }

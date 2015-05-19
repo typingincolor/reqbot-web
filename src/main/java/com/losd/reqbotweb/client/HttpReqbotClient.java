@@ -69,7 +69,7 @@ public class HttpReqbotClient implements ReqbotClient {
 
     @Override
     public List<ReqbotRequest> getByBucket(String bucket) {
-        List<ReqbotRequest> requests = new LinkedList<>();
+        List<ReqbotRequest> requests;
 
         try {
             String result = Request.Get(config.getUrl() + "/buckets/" + bucket).execute().returnContent().asString();
@@ -81,10 +81,11 @@ public class HttpReqbotClient implements ReqbotClient {
             requests = gson.fromJson(result, listType);
 
         } catch (Exception e) {
-            throw new RuntimeException("Error getting requests for bucket");
-        } finally {
-            return requests;
+            logger.error("Error getting requests for bucket", e);
+            throw new ReqbotWebException(e);
         }
+
+        return requests;
     }
 
     @Override
