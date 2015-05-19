@@ -1,0 +1,43 @@
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:1.2.3.RELEASE")
+    }
+}
+
+
+apply plugin: 'java'
+apply plugin: 'spring-boot'
+apply plugin: 'findbugs'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+version = '1.0'
+
+repositories {
+    jcenter()
+}
+
+configurations {
+    all*.exclude group: 'logback'
+    all*.exclude group: 'log4j'
+}
+
+dependencies {
+    compile 'org.slf4j:slf4j-api:1.7.12'
+    compile 'org.springframework.boot:spring-boot-starter-web'
+    compile 'org.springframework.boot:spring-boot-starter-thymeleaf'
+    compile 'com.google.guava:guava:18.0'
+
+    testCompile 'org.springframework.boot:spring-boot-starter-test'
+    testCompile 'uk.co.modular-it:hamcrest-date:0.9.5'
+    testCompile 'commons-lang:commons-lang:2.6'
+    testCompile 'org.cthul:cthul-matchers:1.1.0'
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.4'
+}

@@ -1,0 +1,20 @@
+# Created by .ignore support plugin (hsz.mobi)
+### Java template
+*.class
+
+*.iml
+
+## Directory-based project format:
+.idea/
+
+out
+.classpath
+.project
+.settings
+bin
+build
+.env
+.gradle
+dump.rdb
+
+reqbot.jar
