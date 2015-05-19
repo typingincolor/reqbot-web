@@ -5,11 +5,12 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import com.losd.reqbotweb.config.ReqbotClientConfiguration;
-import com.losd.reqbotweb.exception.ReqbotWebException;
 import com.losd.reqbotweb.model.ReqbotRequest;
 import com.losd.reqbotweb.model.Response;
+import com.mashape.unirest.http.HttpResponse;
+import com.mashape.unirest.http.Unirest;
+import com.mashape.unirest.http.exceptions.UnirestException;
 import org.apache.http.HttpStatus;
-import org.apache.http.client.HttpResponseException;
 import org.apache.http.client.fluent.Request;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,56 +47,56 @@ import java.util.List;
  */
 @Component
 public class HttpReqbotClient implements ReqbotClient {
+    Gson gson = new GsonBuilder().serializeNulls().create();
+
     Logger logger = LoggerFactory.getLogger(HttpReqbotClient.class);
+
     @Autowired
     ReqbotClientConfiguration config;
 
     @Override
     public List<String> getBuckets() {
-        List<String> buckets = null;
-
         try {
-            String result = Request.Get(config.getUrl() + "/buckets").execute().returnContent().asString();
-            Gson gson = new GsonBuilder().serializeNulls().create();
+            HttpResponse<String> result = Unirest.get(config.getUrl() + "/buckets").asString();
 
-            Type listType = new TypeToken<LinkedList<String>>() {
-            }.getType();
-
-            buckets = gson.fromJson(result, listType);
-        }
-        catch (HttpResponseException responseException) {
-            if (responseException.getStatusCode() == HttpStatus.SC_NOT_FOUND) {
-                buckets = Collections.emptyList();
+            switch(result.getStatus()) {
+                case HttpStatus.SC_OK:
+                    List<String> buckets = gson.fromJson(result.getBody(), getTypeLinkedListString());
+                    return ImmutableList.copyOf(buckets);
+                case HttpStatus.SC_NOT_FOUND:
+                    return ImmutableList.copyOf(Collections.emptyList());
+                default:
+                    logger.error("Received HTTP status code of {} from reqbot api", result.getStatus());
+                    throw new HttpReqbotClientException(result.getStatus());
             }
-            else throw new ReqbotWebException(responseException);
         }
-        catch (Exception e) {
-            logger.error("Error getting buckets", e);
-            throw new ReqbotWebException(e);
+        catch (UnirestException e) {
+            logger.error("Something has gone wrong with Unirest", e);
+            throw new HttpReqbotClientException(e);
         }
-        return ImmutableList.copyOf(buckets);
     }
+
 
     @Override
     public List<ReqbotRequest> getByBucket(String bucket) {
-        List<ReqbotRequest> requests;
-
         try {
-            String result = Request.Get(config.getUrl() + "/buckets/" + bucket).execute().returnContent().asString();
-            Gson gson = new GsonBuilder().serializeNulls().create();
+            HttpResponse<String> result = Unirest.get(config.getUrl() + "/buckets/" + bucket).asString();
 
-            Type listType = new TypeToken<LinkedList<ReqbotRequest>>() {
-            }.getType();
-
-            requests = gson.fromJson(result, listType);
-
+            switch(result.getStatus()) {
+                case HttpStatus.SC_OK:
+                    List<ReqbotRequest> requests = gson.fromJson(result.getBody(), getTypeLinkedListReqbotRequest());
+                    return ImmutableList.copyOf(requests);
+                case HttpStatus.SC_NOT_FOUND:
+                    return ImmutableList.copyOf(Collections.emptyList());
+                default:
+                    logger.error("Received HTTP status code of {} from reqbot api", result.getStatus());
+                    throw new HttpReqbotClientException(result.getStatus());
+            }
         }
-        catch (Exception e) {
-            logger.error("Error getting requests for bucket", e);
-            throw new ReqbotWebException(e);
+        catch (UnirestException e) {
+            logger.error("Something has gone wrong with Unirest", e);
+            throw new HttpReqbotClientException(e);
         }
-
-        return ImmutableList.copyOf(requests);
     }
 
     @Override
@@ -117,4 +118,13 @@ public class HttpReqbotClient implements ReqbotClient {
     public void save(Response newResponse) {
 
     }
+
+    private Type getTypeLinkedListString() {
+        return new TypeToken<LinkedList<String>>() {}.getType();
+    }
+
+    private Type getTypeLinkedListReqbotRequest() {
+        return new TypeToken<LinkedList<ReqbotRequest>>() {}.getType();
+    }
+
 }

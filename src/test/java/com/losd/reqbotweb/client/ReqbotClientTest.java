@@ -1,23 +1,9 @@
 package com.losd.reqbotweb.client;
 
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
-import com.losd.reqbotweb.config.ReqbotClientConfiguration;
-import com.losd.reqbotweb.exception.ReqbotWebException;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.junit.Rule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-
-import java.util.List;
-
-import static com.github.tomakehurst.wiremock.client.WireMock.*;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
-
 
 /**
  * The MIT License (MIT)
@@ -42,8 +28,6 @@ import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = {ReqbotClientConfiguration.class, HttpReqbotClient.class})
 public class ReqbotClientTest {
     @Rule
     @SuppressFBWarnings("URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
@@ -51,40 +35,4 @@ public class ReqbotClientTest {
 
     @Autowired
     HttpReqbotClient client;
-
-    @Test
-    public void it_gets_a_list_of_buckets() throws Exception {
-        stubFor(get(urlEqualTo("/buckets"))
-                .willReturn(
-                        aResponse().withStatus(200)
-                                .withHeader("Content-Type", "application/json")
-                                .withBody("[\"aa\",\"bb\",\"cc\",\"dd\"]")));
-
-        List<String> result =  client.getBuckets();
-        assertThat(result, hasSize(4));
-        assertThat(result, contains("aa", "bb", "cc", "dd"));
-
-        verify(getRequestedFor(urlMatching("/buckets")));
-    }
-
-    @Test(expected = ReqbotWebException.class)
-    public void it_handles_a_bad_request_when_getting_a_list_of_buckets() throws Exception {
-        stubFor(get(urlEqualTo("/buckets"))
-                .willReturn(
-                        aResponse().withStatus(500).withBody("Server Error")));
-
-        client.getBuckets();
-    }
-
-    @Test
-    public void it_handles_a_404_when_there_are_no_buckets() throws Exception {
-        stubFor(get(urlEqualTo("/buckets"))
-                .willReturn(
-                        aResponse().withStatus(404).withBody("Not Found")));
-
-        List<String> result = client.getBuckets();
-
-        assertThat(result, hasSize(0));
-        verify(getRequestedFor(urlMatching("/buckets")));
-    }
 }

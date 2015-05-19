@@ -1,4 +1,4 @@
-package com.losd.reqbotweb.exception;
+package com.losd.reqbotweb.client;
 
 /**
  * The MIT License (MIT)
@@ -23,10 +23,12 @@ package com.losd.reqbotweb.exception;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-public class ReqbotWebException extends RuntimeException {
-    Throwable rootCause;
+public class HttpReqbotClientException extends RuntimeException {
+    public HttpReqbotClientException(Throwable rootCause) {
+        super("There has been a problem getting data from the reqbot api", rootCause);
+    }
 
-    public ReqbotWebException(Throwable rootCause) {
-        this.rootCause = rootCause;
+    public HttpReqbotClientException(int httpStatusCode) {
+        super(String.format("Received a HTTP status code of %d from reqbot api", httpStatusCode));
     }
 }
