@@ -1,0 +1,14 @@
+{
+  "headers" : {
+    "header1" : "value1",
+    "header2" : "value2"
+  },
+  "tags" : [
+    "a",
+    "b",
+    "c",
+    "d"
+  ],
+  "body" : "body",
+  "uuid" : "bbf9c3de-1547-4423-8274-ffc79d07aaaa"
+}
