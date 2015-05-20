@@ -5,7 +5,6 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 /**
  * The MIT License (MIT)
@@ -32,7 +31,6 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
  */
 @EnableAutoConfiguration(exclude = {JacksonAutoConfiguration.class})
 @ComponentScan
-@EnableWebMvc
 @SpringBootApplication
 public class ReqbotWeb {
     public static void main(String[] args) {
