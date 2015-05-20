@@ -30,7 +30,6 @@ dependencies {
     compile 'org.springframework.boot:spring-boot-starter-web'
     compile 'org.springframework.boot:spring-boot-starter-thymeleaf'
     compile 'com.google.guava:guava:18.0'
-    compile 'org.apache.httpcomponents:fluent-hc:4.4.1'
     compile 'org.javassist:javassist:3.19.0-GA'
     compile 'com.mashape.unirest:unirest-java:1.4.5'
 
@@ -67,4 +66,18 @@ tasks.withType(FindBugs) {
         xml.enabled = false
         html.enabled = true
     }
+}
+
+task stage(type: Copy, dependsOn: [clean, bootRepackage, installDist]) {
+    from jar.archivePath
+    into project.rootDir
+    rename {
+        'reqbot-web.jar'
+    }
+}
+stage.mustRunAfter(clean)
+uploadArchives.dependsOn bootRepackage
+
+clean << {
+    project.file('reqbot-web.jar').delete()
 }

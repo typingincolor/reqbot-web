@@ -17,4 +17,4 @@ build
 .gradle
 dump.rdb
 
-reqbot.jar
+reqbot-web.jar
