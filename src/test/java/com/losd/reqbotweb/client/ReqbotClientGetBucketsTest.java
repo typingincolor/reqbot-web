@@ -1,10 +1,6 @@
 package com.losd.reqbotweb.client;
 
-import com.losd.reqbotweb.config.ReqbotClientConfiguration;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.List;
 
@@ -37,8 +33,6 @@ import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = {ReqbotClientConfiguration.class, HttpReqbotClient.class})
 public class ReqbotClientGetBucketsTest extends ReqbotClientTest {
     @Test
     public void it_gets_a_list_of_buckets() throws Exception {

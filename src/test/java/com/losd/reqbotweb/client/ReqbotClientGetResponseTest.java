@@ -1,11 +1,7 @@
 package com.losd.reqbotweb.client;
 
-import com.losd.reqbotweb.config.ReqbotClientConfiguration;
 import com.losd.reqbotweb.model.Response;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static org.hamcrest.CoreMatchers.is;
@@ -38,8 +34,6 @@ import static org.hamcrest.core.IsEqual.equalTo;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = {ReqbotClientConfiguration.class, HttpReqbotClient.class})
 public class ReqbotClientGetResponseTest extends ReqbotClientTest {
     @Test
     public void it_gets_a_response() throws Exception {

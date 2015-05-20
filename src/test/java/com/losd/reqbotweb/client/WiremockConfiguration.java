@@ -1,14 +1,8 @@
 package com.losd.reqbotweb.client;
 
-import com.github.tomakehurst.wiremock.junit.WireMockRule;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import org.junit.Ignore;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import com.losd.reqbotweb.config.ReqbotClientConfiguration;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
 /**
  * The MIT License (MIT)
@@ -33,13 +27,12 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = {WiremockConfiguration.class, HttpReqbotClient.class})
-abstract public class ReqbotClientTest {
-    @Rule
-    @SuppressFBWarnings("URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public WireMockRule wireMockRule = new WireMockRule(8091);
-
-    @Autowired
-    HttpReqbotClient client;
+@Configuration
+public class WiremockConfiguration {
+    @Bean
+    ReqbotClientConfiguration getConfiguration() {
+        ReqbotClientConfiguration configuration = new ReqbotClientConfiguration();
+        configuration.setUrl("http://localhost:8091");
+        return configuration;
+    }
 }
