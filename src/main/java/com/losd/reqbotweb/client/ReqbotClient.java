@@ -2,6 +2,7 @@ package com.losd.reqbotweb.client;
 
 import com.losd.reqbotweb.model.ReqbotRequest;
 import com.losd.reqbotweb.model.Response;
+import com.losd.reqbotweb.model.WebResponse;
 
 import java.util.List;
 
@@ -35,5 +36,5 @@ public interface ReqbotClient {
     List<String> getTags();
     List<Response> getByTag(String tag);
     Response getResponse(String id) throws ResponseNotFoundException;
-    void save(Response newResponse);
+    Response save(WebResponse newResponse);
 }

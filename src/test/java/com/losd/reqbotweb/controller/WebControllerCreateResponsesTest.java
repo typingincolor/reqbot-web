@@ -2,6 +2,7 @@ package com.losd.reqbotweb.controller;
 
 import com.losd.reqbotweb.client.ReqbotClient;
 import com.losd.reqbotweb.model.Response;
+import com.losd.reqbotweb.model.WebResponse;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -13,12 +14,14 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
+import java.util.Arrays;
+
 import static org.cthul.matchers.CthulMatchers.matchesPattern;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
-import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.core.IsEqual.equalTo;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -46,8 +49,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * THE SOFTWARE.
  */
 public class WebControllerCreateResponsesTest {
-    public static final String UUID_REGEX = "^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$";
-
     private MockMvc mockMvc;
 
     @Mock
@@ -66,130 +67,27 @@ public class WebControllerCreateResponsesTest {
 
     @Test
     public void it_creates_a_response() throws Exception {
+        Response result = new Response.Builder().addHeader("header1", "value1")
+                .tags(Arrays.asList("a", "b", "c"))
+                .body("body").build();
+
+        when(client.save(any(WebResponse.class))).thenReturn(result);
+
         mockMvc.perform(post("/web/response/create")
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                .param("tags", "a,b,c,d")
-                .param("headers", "header1:value1\r\nheader2:value2")
-                .param("body", "this\r\nis\r\na\r\nbody"))
+                .param("tags", "a,b,c")
+                .param("headers", "header1:value1")
+                .param("body", "body"))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(model().attribute("response", isA(Response.class)))
+                .andExpect(model().attribute("response", is(equalTo(result))))
                 .andExpect(view().name(matchesPattern("redirect:/web/responses/" + "[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}")));
 
-        ArgumentCaptor<Response> argumentCaptor = ArgumentCaptor.forClass(Response.class);
+        ArgumentCaptor<WebResponse> argumentCaptor = ArgumentCaptor.forClass(WebResponse.class);
 
         verify(client, times(1)).save(argumentCaptor.capture());
 
-        assertThat(argumentCaptor.getValue().getBody(), is(equalTo("this\r\nis\r\na\r\nbody")));
-
-        assertThat(argumentCaptor.getValue().getHeaders().size(), is(equalTo(2)));
-        assertThat(argumentCaptor.getValue().getHeaders(), hasEntry("header1", "value1"));
-        assertThat(argumentCaptor.getValue().getHeaders(), hasEntry("header2", "value2"));
-
-        assertThat(argumentCaptor.getValue().getTags(), hasSize(4));
-        assertThat(argumentCaptor.getValue().getTags(), contains("a", "b", "c", "d"));
-        assertThat(argumentCaptor.getValue().getUuid().toString(), matchesPattern(UUID_REGEX));
-    }
-
-    @Test
-         public void it_handles_headers_with_dashes() throws Exception {
-        mockMvc.perform(post("/web/response/create")
-                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                .param("tags", "a,b,c,d")
-                .param("headers", "Content-Type:value1\r\nheader2:value2")
-                .param("body", "this\r\nis\r\na\r\nbody"))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(model().attribute("response", isA(Response.class)))
-                .andExpect(view().name(matchesPattern("redirect:/web/responses/" + "[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}")));
-
-        ArgumentCaptor<Response> argumentCaptor = ArgumentCaptor.forClass(Response.class);
-
-        verify(client, times(1)).save(argumentCaptor.capture());
-
-        assertThat(argumentCaptor.getValue().getHeaders().size(), is(equalTo(2)));
-        assertThat(argumentCaptor.getValue().getHeaders(), hasEntry("Content-Type", "value1"));
-        assertThat(argumentCaptor.getValue().getHeaders(), hasEntry("header2", "value2"));
-
-        assertThat(argumentCaptor.getValue().getTags(), hasSize(4));
-        assertThat(argumentCaptor.getValue().getTags(), contains("a", "b", "c", "d"));
-        assertThat(argumentCaptor.getValue().getUuid().toString(), matchesPattern(UUID_REGEX));
-    }
-
-    @Test
-    public void it_handles_headers_with_dots() throws Exception {
-        mockMvc.perform(post("/web/response/create")
-                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                .param("headers", "Content.Type:value1\r\nheader2:value2"))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(model().attribute("response", isA(Response.class)))
-                .andExpect(view().name(matchesPattern("redirect:/web/responses/" + "[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}")));
-
-        ArgumentCaptor<Response> argumentCaptor = ArgumentCaptor.forClass(Response.class);
-
-        verify(client, times(1)).save(argumentCaptor.capture());
-
-        assertThat(argumentCaptor.getValue().getHeaders().size(), is(equalTo(2)));
-        assertThat(argumentCaptor.getValue().getHeaders(), hasEntry("Content.Type", "value1"));
-        assertThat(argumentCaptor.getValue().getHeaders(), hasEntry("header2", "value2"));
-
-        assertThat(argumentCaptor.getValue().getUuid().toString(), matchesPattern(UUID_REGEX));
-    }
-
-    @Test
-    public void it_handles_headers_with_spaces() throws Exception {
-        mockMvc.perform(post("/web/response/create")
-                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                .param("headers", "header1    : value1\r\nheader2: value2"))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(model().attribute("response", isA(Response.class)))
-                .andExpect(view().name(matchesPattern("redirect:/web/responses/" + "[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}")));
-
-        ArgumentCaptor<Response> argumentCaptor = ArgumentCaptor.forClass(Response.class);
-
-        verify(client, times(1)).save(argumentCaptor.capture());
-
-        assertThat(argumentCaptor.getValue().getHeaders().size(), is(equalTo(2)));
-        assertThat(argumentCaptor.getValue().getHeaders(), hasEntry("header1", "value1"));
-        assertThat(argumentCaptor.getValue().getHeaders(), hasEntry("header2", "value2"));
-
-        assertThat(argumentCaptor.getValue().getUuid().toString(), matchesPattern(UUID_REGEX));
-    }
-
-    @Test
-    public void it_handles_headers_with_slashes() throws Exception {
-        mockMvc.perform(post("/web/response/create")
-                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                .param("headers", "header1    : a/b\r\nheader2: value2"))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(model().attribute("response", isA(Response.class)))
-                .andExpect(view().name(matchesPattern("redirect:/web/responses/" + "[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}")));
-
-        ArgumentCaptor<Response> argumentCaptor = ArgumentCaptor.forClass(Response.class);
-
-        verify(client, times(1)).save(argumentCaptor.capture());
-
-        assertThat(argumentCaptor.getValue().getHeaders().size(), is(equalTo(2)));
-        assertThat(argumentCaptor.getValue().getHeaders(), hasEntry("header1", "a/b"));
-        assertThat(argumentCaptor.getValue().getHeaders(), hasEntry("header2", "value2"));
-
-        assertThat(argumentCaptor.getValue().getUuid().toString(), matchesPattern(UUID_REGEX));
-    }
-
-
-    @Test
-    public void it_handles_tags_with_spaces() throws Exception {
-        mockMvc.perform(post("/web/response/create")
-                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                .param("tags", "a , b ,c , d"))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(model().attribute("response", isA(Response.class)))
-                .andExpect(view().name(matchesPattern("redirect:/web/responses/" + "[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}")));
-
-        ArgumentCaptor<Response> argumentCaptor = ArgumentCaptor.forClass(Response.class);
-
-        verify(client, times(1)).save(argumentCaptor.capture());
-
-        assertThat(argumentCaptor.getValue().getTags(), hasSize(4));
-        assertThat(argumentCaptor.getValue().getTags(), contains("a", "b", "c", "d"));
-        assertThat(argumentCaptor.getValue().getUuid().toString(), matchesPattern(UUID_REGEX));
+        assertThat(argumentCaptor.getValue().getHeaders(), is(equalTo("header1:value1")));
+        assertThat(argumentCaptor.getValue().getTags(), is(equalTo("a,b,c")));
+        assertThat(argumentCaptor.getValue().getBody(), is(equalTo("body")));
     }
 }

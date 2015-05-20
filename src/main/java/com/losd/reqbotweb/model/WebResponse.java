@@ -1,5 +1,13 @@
 package com.losd.reqbotweb.model;
 
+import com.google.common.base.Strings;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
+
+import java.util.*;
+import java.util.regex.MatchResult;
+
 /**
  * The MIT License (MIT)
  * <p>
@@ -50,5 +58,49 @@ public class WebResponse {
 
     public void setBody(String body) {
         this.body = body;
+    }
+
+    public String toJson() {
+        Map<String, String> headers = getHeadersFromFormData(getHeaders());
+        List<String> tags = getTagsFromFormData(getTags());
+
+        Gson gson = new GsonBuilder().serializeNulls().create();
+
+        JsonObject json = new JsonObject();
+        json.add("headers", gson.toJsonTree(headers));
+        json.add("tags", gson.toJsonTree(tags));
+        json.add("body", gson.toJsonTree(getBody()));
+
+        return gson.toJson(json);
+    }
+
+    private Map<String, String> getHeadersFromFormData(String formHeaders) {
+        if (Strings.isNullOrEmpty(formHeaders)) {
+            return Collections.emptyMap();
+        }
+
+        Map<String, String> headers = new HashMap<>();
+        Scanner headerScanner = new Scanner(formHeaders);
+
+        while (headerScanner.hasNextLine()) {
+            Scanner lineScanner = new Scanner(headerScanner.nextLine());
+            lineScanner.findInLine("([a-z0-9A-Z-\\./]+)\\s*:\\s*([a-z0-9A-Z-\\./]+)");
+            MatchResult res = lineScanner.match();
+            headers.put(res.group(1), res.group(2));
+        }
+
+        return headers;
+    }
+
+    private List<String> getTagsFromFormData(String formTags) {
+        if (Strings.isNullOrEmpty(formTags)) {
+            return Collections.emptyList();
+        }
+
+        List<String> tags = new LinkedList<>();
+        Scanner tagScanner = new Scanner(formTags).useDelimiter("\\s*,\\s*");
+        tagScanner.forEachRemaining((tag) -> tags.add(tag));
+
+        return tags;
     }
 }

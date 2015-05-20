@@ -1,6 +1,5 @@
 package com.losd.reqbotweb.controller;
 
-import com.google.common.base.Strings;
 import com.losd.reqbotweb.client.ReqbotClient;
 import com.losd.reqbotweb.client.ResponseNotFoundException;
 import com.losd.reqbotweb.model.Response;
@@ -13,8 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import java.util.*;
-import java.util.regex.MatchResult;
+import java.util.List;
 
 /**
  * The MIT License (MIT)
@@ -109,44 +107,9 @@ public class WebController {
 
     @RequestMapping(value = "/web/response/create", method = RequestMethod.POST)
     public String handleCreateReponseForm(@ModelAttribute WebResponse webResponse,Model model) {
-        Map<String, String> headers = getHeadersFromFormData(webResponse.getHeaders());
-        List<String> tags = getTagsFromFormData(webResponse.getTags());
+        Response result = client.save(webResponse);
 
-        Response newResponse = new Response.Builder().headers(headers).tags(tags).body(webResponse.getBody()).build();
-
-        client.save(newResponse);
-
-        model.addAttribute("response", newResponse);
-        return "redirect:/web/responses/" + newResponse.getUuid();
-    }
-
-    private Map<String, String> getHeadersFromFormData(String formHeaders) {
-        if (Strings.isNullOrEmpty(formHeaders)) {
-            return Collections.emptyMap();
-        }
-
-        Map<String, String> headers = new HashMap<>();
-        Scanner headerScanner = new Scanner(formHeaders);
-
-        while (headerScanner.hasNextLine()) {
-            Scanner lineScanner = new Scanner(headerScanner.nextLine());
-            lineScanner.findInLine("([a-z0-9A-Z-\\./]+)\\s*:\\s*([a-z0-9A-Z-\\./]+)");
-            MatchResult res = lineScanner.match();
-            headers.put(res.group(1), res.group(2));
-        }
-
-        return headers;
-    }
-
-    private List<String> getTagsFromFormData(String formTags) {
-        if (Strings.isNullOrEmpty(formTags)) {
-            return Collections.emptyList();
-        }
-
-        List<String> tags = new LinkedList<>();
-        Scanner tagScanner = new Scanner(formTags).useDelimiter("\\s*,\\s*");
-        tagScanner.forEachRemaining((tag) -> tags.add(tag));
-
-        return tags;
+        model.addAttribute("response", result);
+        return "redirect:/web/responses/" + result.getUuid();
     }
 }

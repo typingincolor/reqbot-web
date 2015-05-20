@@ -7,6 +7,7 @@ import com.google.gson.reflect.TypeToken;
 import com.losd.reqbotweb.config.ReqbotClientConfiguration;
 import com.losd.reqbotweb.model.ReqbotRequest;
 import com.losd.reqbotweb.model.Response;
+import com.losd.reqbotweb.model.WebResponse;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
@@ -98,8 +99,24 @@ public class HttpReqbotClient implements ReqbotClient {
     }
 
     @Override
-    public void save(Response newResponse) {
+    public Response save(WebResponse newResponse) {
+        try {
+            HttpResponse<String> result = Unirest.post(config.getUrl() + "/{resource}")
+                    .routeParam("resource", "responses")
+                    .body(newResponse.toJson())
+                    .asString();
 
+            switch (result.getStatus()) {
+                case HttpStatus.SC_OK:
+                    return gson.fromJson(result.getBody(), Response.class);
+                default:
+                    logger.error("Received HTTP status code of {} from reqbot api", result.getStatus());
+                    throw new HttpReqbotClientException(result.getStatus());
+            }
+        } catch (UnirestException e) {
+            logger.error("Something has gone wrong with Unirest", e);
+            throw new HttpReqbotClientException(e);
+        }
     }
 
     private List getResourceById(String resource, String id, Type type) {
