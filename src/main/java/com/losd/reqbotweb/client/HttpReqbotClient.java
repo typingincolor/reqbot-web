@@ -102,6 +102,8 @@ public class HttpReqbotClient implements ReqbotClient {
     public Response save(WebResponse newResponse) {
         try {
             HttpResponse<String> result = Unirest.post(config.getUrl() + "/{resource}")
+                    .header("accept", "application/json")
+                    .header("Content-Type", "application/json")
                     .routeParam("resource", "responses")
                     .body(newResponse.toJson())
                     .asString();
@@ -119,7 +121,7 @@ public class HttpReqbotClient implements ReqbotClient {
         }
     }
 
-    private List getResourceById(String resource, String id, Type type) {
+    private <T> List<T> getResourceById(String resource, String id, Type T) {
         try {
             HttpResponse<String> result = Unirest.get(config.getUrl() + "/{resource}/{id}")
                     .routeParam("resource", resource)
@@ -128,7 +130,7 @@ public class HttpReqbotClient implements ReqbotClient {
 
             switch (result.getStatus()) {
                 case HttpStatus.SC_OK:
-                    List requests = gson.fromJson(result.getBody(), type);
+                    List<T> requests = gson.fromJson(result.getBody(), T);
                     return ImmutableList.copyOf(requests);
                 case HttpStatus.SC_NOT_FOUND:
                     return ImmutableList.copyOf(Collections.emptyList());

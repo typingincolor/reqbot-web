@@ -44,10 +44,11 @@ public class ReqbotClientSaveResponseTest extends ReqbotClientTest {
 
         stubFor(post(urlEqualTo("/responses"))
                 .withRequestBody(WireMock.equalTo(webResponse.toJson()))
-                .willReturn(
-                        aResponse().withStatus(200)
-                                .withHeader("Content-Type", "application/json")
-                                .withBodyFile("saved_response.json")));
+                .withHeader("Content-Type", WireMock.equalTo("application/json"))
+                        .willReturn(
+                                aResponse().withStatus(200)
+                                        .withHeader("Content-Type", "application/json")
+                                        .withBodyFile("saved_response.json")));
 
         Response response = client.save(webResponse);
         assertThat(response.getHeaders(), hasEntry("header1", "value1"));
