@@ -29,11 +29,15 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 @EnableConfigurationProperties
-@ConfigurationProperties(prefix = "reqbot.redis")
+@ConfigurationProperties(prefix = "reqbot.api")
 public class ReqbotClientConfiguration {
-    public String url = "http://localhost:8080";
+    private String url = "http://localhost:8080";
 
     public String getUrl() {
         return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
     }
 }
