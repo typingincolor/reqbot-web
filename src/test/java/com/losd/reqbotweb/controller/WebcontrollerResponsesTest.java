@@ -88,13 +88,13 @@ public class WebcontrollerResponsesTest {
     public void it_renders_the_correct_page_for_a_single_response() throws Exception {
         Response response = new Response.Builder().addHeader("header1", "value1").body("body").build();
 
-        when(responseRepo.get("1234")).thenReturn(response);
+        when(responseRepo.getResponse("1234")).thenReturn(response);
 
         mockMvc.perform(get("/web/responses/1234")).andExpect(status().isOk())
             .andExpect(view().name(is("response")))
             .andExpect(model().attribute("response", is(equalTo(response))));
 
-        verify(responseRepo, times(1)).get("1234");
+        verify(responseRepo, times(1)).getResponse("1234");
     }
 
     @Test

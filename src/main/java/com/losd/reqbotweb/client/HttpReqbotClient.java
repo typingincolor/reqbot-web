@@ -74,8 +74,27 @@ public class HttpReqbotClient implements ReqbotClient {
     }
 
     @Override
-    public Response get(String response) {
-        return null;
+    public Response getResponse(String id) throws ResponseNotFoundException {
+        try {
+            HttpResponse<String> result = Unirest.get(config.getUrl() + "/{resource}/{id}")
+                    .routeParam("resource", "responses")
+                    .routeParam("id", id)
+                    .asString();
+
+            switch (result.getStatus()) {
+                case HttpStatus.SC_OK:
+                    return gson.fromJson(result.getBody(), Response.class);
+                case HttpStatus.SC_NOT_FOUND:
+                    logger.error("Could not find response {} from reqbot api", id);
+                    throw new ResponseNotFoundException(id);
+                default:
+                    logger.error("Received HTTP status code of {} from reqbot api", result.getStatus());
+                    throw new HttpReqbotClientException(result.getStatus());
+            }
+        } catch (UnirestException e) {
+            logger.error("Something has gone wrong with Unirest", e);
+            throw new HttpReqbotClientException(e);
+        }
     }
 
     @Override

@@ -2,6 +2,7 @@ package com.losd.reqbotweb.controller;
 
 import com.google.common.base.Strings;
 import com.losd.reqbotweb.client.ReqbotClient;
+import com.losd.reqbotweb.client.ResponseNotFoundException;
 import com.losd.reqbotweb.model.Response;
 import com.losd.reqbotweb.model.WebResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -91,9 +92,13 @@ public class WebController {
 
     @RequestMapping(value = "/web/responses/{response}", method = RequestMethod.GET)
     public String response(@PathVariable String response, Model model) {
-        Response result = client.get(response);
-        model.addAttribute("response", result);
-        return "response";
+        try {
+            Response result = client.getResponse(response);
+            model.addAttribute("response", result);
+            return "response";
+        } catch (ResponseNotFoundException e) {
+            return "error";
+        }
     }
 
     @RequestMapping(value = "/web/response/create", method = RequestMethod.GET)
