@@ -1,9 +1,9 @@
 package com.losd.reqbotweb.controller;
 
 import com.google.common.base.Strings;
+import com.losd.reqbotweb.client.ReqbotClient;
 import com.losd.reqbotweb.model.Response;
 import com.losd.reqbotweb.model.WebResponse;
-import com.losd.reqbotweb.client.ReqbotClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
