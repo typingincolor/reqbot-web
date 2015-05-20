@@ -56,7 +56,9 @@ public class HttpReqbotClient implements ReqbotClient {
     @Override
     public List<String> getBuckets() {
         try {
-            HttpResponse<String> result = Unirest.get(config.getUrl() + "/buckets").asString();
+            HttpResponse<String> result = Unirest.get(config.getUrl() + "/{resource}")
+                    .routeParam("resource", "buckets")
+                    .asString();
 
             switch(result.getStatus()) {
                 case HttpStatus.SC_OK:
@@ -79,7 +81,10 @@ public class HttpReqbotClient implements ReqbotClient {
     @Override
     public List<ReqbotRequest> getByBucket(String bucket) {
         try {
-            HttpResponse<String> result = Unirest.get(config.getUrl() + "/buckets/" + bucket).asString();
+            HttpResponse<String> result = Unirest.get(config.getUrl() + "/{resource}/{bucket}")
+                    .routeParam("resource", "buckets")
+                    .routeParam("bucket", bucket)
+                    .asString();
 
             switch(result.getStatus()) {
                 case HttpStatus.SC_OK:
