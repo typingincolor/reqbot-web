@@ -54,7 +54,7 @@
                         <tr th:each="header : ${request.headers}">
                             <td th:text="${header.key}">key</td>
                             <td th:if="${header.key == 'x-reqbot-response'}">
-                                <a th:href="@{/web/responses/{response}(response = ${header.value})}" th:text="${header.value}" href="#">value</a>
+                                <a th:href="@{/responses/{response}(response = ${header.value})}" th:text="${header.value}" href="#">value</a>
                             </td>
                             <td th:if="${header.key != 'x-reqbot-response'}" th:text="${header.value}">value</td>
                         </tr>

@@ -69,8 +69,8 @@ public class WebcontrollerResponsesTest {
 
         when(responseRepo.getTags()).thenReturn(tagList);
 
-        mockMvc.perform(get("/web/responses")).andExpect(status().is3xxRedirection())
-                .andExpect(view().name(is("redirect:/web/tag/tag1")));
+        mockMvc.perform(get("/responses")).andExpect(status().is3xxRedirection())
+                .andExpect(view().name(is("redirect:/tags/tag1")));
 
         verify(responseRepo, times(1)).getTags();
     }
@@ -79,7 +79,7 @@ public class WebcontrollerResponsesTest {
     public void it_renders_the_reponse_page_if_there_are_no_tags() throws Exception {
         when(responseRepo.getTags()).thenReturn(Collections.emptyList());
 
-        mockMvc.perform(get("/web/responses")).andExpect(status().isOk())
+        mockMvc.perform(get("/responses")).andExpect(status().isOk())
                 .andExpect(view().name(is("index")))
                 .andExpect(model().attribute("mode", is(equalTo("response"))));
     }
@@ -90,7 +90,7 @@ public class WebcontrollerResponsesTest {
 
         when(responseRepo.getResponse("1234")).thenReturn(response);
 
-        mockMvc.perform(get("/web/responses/1234")).andExpect(status().isOk())
+        mockMvc.perform(get("/responses/1234")).andExpect(status().isOk())
             .andExpect(view().name(is("response")))
             .andExpect(model().attribute("response", is(equalTo(response))));
 
@@ -99,7 +99,7 @@ public class WebcontrollerResponsesTest {
 
     @Test
     public void it_renders_the_create_response_page() throws Exception {
-        mockMvc.perform(get("/web/response/create")).andExpect(status().isOk())
+        mockMvc.perform(get("/responses/create")).andExpect(status().isOk())
                 .andExpect(view().name(is("create-response")))
                 .andExpect(model().attribute("webResponse", isA(WebResponse.class)));
     }

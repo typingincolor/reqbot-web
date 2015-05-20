@@ -72,7 +72,7 @@ public class WebControllerTagViewTest {
         when(client.getTags()).thenReturn(Arrays.asList("tag1", "tag2", "tag3"));
         when(client.getByTag("tag1")).thenReturn(responseList);
 
-        mockMvc.perform(get("/web/tag/tag1"))
+        mockMvc.perform(get("/tags/tag1"))
                 .andExpect(status().isOk())
                 .andExpect(view().name(is("tag-view")))
                 .andExpect(model().attribute("mode", is(equalTo("response"))))

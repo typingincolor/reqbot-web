@@ -18,7 +18,7 @@
 
     <ul id="bucket-list">
         <li class="tag" th:each="b : ${buckets}">
-            <a th:href="@{/web/bucket/{bucket}(bucket = ${b})}" href="#">
+            <a th:href="@{/buckets/{bucket}(bucket = ${b})}" href="#">
                 <span class="label" th:classappend="${b == bucket}? label-success : label-primary"  th:text="${b}">bucket</span>
             </a>
         </li>

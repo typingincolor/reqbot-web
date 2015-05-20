@@ -79,7 +79,7 @@ public class WebControllerBucketViewTest {
         when(requests.getBuckets()).thenReturn(Arrays.asList("a", "b"));
         when(requests.getByBucket("a")).thenReturn(requestList);
 
-        mockMvc.perform(get("/web/bucket/a"))
+        mockMvc.perform(get("/buckets/a"))
                 .andExpect(status().isOk())
                 .andExpect(view().name(is("bucket-view")))
                 .andExpect(model().attribute("mode", is(equalTo("request"))))

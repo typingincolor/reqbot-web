@@ -48,7 +48,7 @@ public class WebController {
         List<String> buckets = client.getBuckets();
 
         if (buckets.size() > 0) {
-            return "redirect:/web/bucket/" + buckets.get(0);
+            return "redirect:/buckets/" + buckets.get(0);
         }
 
         model.addAttribute("mode", "request");
@@ -56,7 +56,7 @@ public class WebController {
         return "index";
     }
 
-    @RequestMapping(value = "/web/bucket/{bucket}", method = RequestMethod.GET)
+    @RequestMapping(value = "/buckets/{bucket}", method = RequestMethod.GET)
     public String viewBucket(@PathVariable String bucket, Model model) {
         model.addAttribute("mode", "request");
         model.addAttribute("bucket", bucket);
@@ -65,7 +65,7 @@ public class WebController {
         return "bucket-view";
     }
 
-    @RequestMapping(value = "/web/tag/{tag}", method = RequestMethod.GET)
+    @RequestMapping(value = "/tags/{tag}", method = RequestMethod.GET)
     public String viewTag(@PathVariable String tag, Model model) {
         model.addAttribute("mode", "response");
         model.addAttribute("tag", tag);
@@ -75,12 +75,12 @@ public class WebController {
         return "tag-view";
     }
 
-    @RequestMapping(value = "/web/responses", method = RequestMethod.GET)
+    @RequestMapping(value = "/responses", method = RequestMethod.GET)
     public String responses(Model model) {
         List<String> tags = client.getTags();
 
         if (tags.size() > 0) {
-            return "redirect:/web/tag/" + tags.get(0);
+            return "redirect:/tags/" + tags.get(0);
         }
 
         model.addAttribute("mode", "response");
@@ -88,7 +88,7 @@ public class WebController {
         return "index";
     }
 
-    @RequestMapping(value = "/web/responses/{response}", method = RequestMethod.GET)
+    @RequestMapping(value = "/responses/{response}", method = RequestMethod.GET)
     public String response(@PathVariable String response, Model model) {
         try {
             Response result = client.getResponse(response);
@@ -99,17 +99,17 @@ public class WebController {
         }
     }
 
-    @RequestMapping(value = "/web/response/create", method = RequestMethod.GET)
+    @RequestMapping(value = "/responses/create", method = RequestMethod.GET)
     public String renderCreateReponse(Model model) {
         model.addAttribute("webResponse", new WebResponse());
         return "create-response";
     }
 
-    @RequestMapping(value = "/web/response/create", method = RequestMethod.POST)
+    @RequestMapping(value = "/responses", method = RequestMethod.POST)
     public String handleCreateReponseForm(@ModelAttribute WebResponse webResponse,Model model) {
         Response result = client.save(webResponse);
 
         model.addAttribute("response", result);
-        return "redirect:/web/responses/" + result.getUuid();
+        return "redirect:/responses/" + result.getUuid();
     }
 }

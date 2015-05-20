@@ -73,14 +73,14 @@ public class WebControllerCreateResponsesTest {
 
         when(client.save(any(WebResponse.class))).thenReturn(result);
 
-        mockMvc.perform(post("/web/response/create")
+        mockMvc.perform(post("/responses")
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .param("tags", "a,b,c")
                 .param("headers", "header1:value1")
                 .param("body", "body"))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(model().attribute("response", is(equalTo(result))))
-                .andExpect(view().name(matchesPattern("redirect:/web/responses/" + "[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}")));
+                .andExpect(view().name(matchesPattern("redirect:/responses/" + "[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}")));
 
         ArgumentCaptor<WebResponse> argumentCaptor = ArgumentCaptor.forClass(WebResponse.class);
 
