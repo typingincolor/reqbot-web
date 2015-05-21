@@ -103,6 +103,9 @@ task generateGitProperties {
                 }
                 propertiesFile.text = """git.branch=${branch}\ngit.short.commit.id=${shortRevision}\ngit.commit.id=${commitHash}\ngit.commit.time=${timestamp}"""
             } else {
+                def env = System.getenv()
+                shortRevision = env['SOURCE_VERSION'].substring(0, 6);
+                propertiesFile.text = """git.short.commit.id=${shortRevision}"""
                 project.logger.error('Unable to generate Git properties file:  revision could not be retrieved from Git.')
             }
         } catch (e) {
