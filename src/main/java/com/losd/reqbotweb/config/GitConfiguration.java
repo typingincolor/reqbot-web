@@ -36,33 +36,11 @@ import org.springframework.context.support.ResourceBundleMessageSource;
 @Configuration
 @PropertySource("classpath:git.properties")
 public class GitConfiguration {
-
-    @Value("${git.branch}")
-    private String branch;
-
-    @Value("${git.commit.id}")
-    private String commitId;
-
-    @Value("${git.commit.time}")
-    private String commitTime;
-
     @Value("${git.short.commit.id}")
     private String shortCommitId;
 
-    public String getBranch() {
-        return branch;
-    }
-
     public String getShortCommitId() {
         return shortCommitId;
-    }
-
-    public String getCommitId() {
-        return commitId;
-    }
-
-    public String getCommitTime() {
-        return commitTime;
     }
 
     @Bean
