@@ -11,14 +11,11 @@ apply plugin: 'java'
 apply plugin: 'spring-boot'
 apply plugin: 'findbugs'
 apply plugin: 'jacoco'
-apply plugin: 'war'
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
-war {
-    baseName = 'rebot-web'
-}
+version = '1.0'
 
 repositories {
     jcenter()
@@ -42,8 +39,6 @@ dependencies {
     compile 'com.google.guava:guava:18.0'
     compile 'org.javassist:javassist:3.19.0-GA'
     compile 'com.mashape.unirest:unirest-java:1.4.5'
-
-    providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
 
     testCompile 'org.springframework.boot:spring-boot-starter-test'
     testCompile 'uk.co.modular-it:hamcrest-date:0.9.5'
