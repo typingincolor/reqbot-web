@@ -10,6 +10,7 @@ buildscript {
 apply plugin: 'java'
 apply plugin: 'spring-boot'
 apply plugin: 'findbugs'
+apply plugin: 'jacoco'
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
@@ -23,6 +24,12 @@ repositories {
 configurations {
     all*.exclude group: 'logback'
     all*.exclude group: 'log4j'
+}
+
+findbugs {
+    ignoreFailures true
+    effort = "max"
+    reportLevel = "medium"
 }
 
 dependencies {
@@ -46,6 +53,9 @@ task wrapper(type: Wrapper) {
 }
 
 test {
+    jacoco {
+        append false
+    }
     useJUnit {
         excludeCategories 'com.losd.reqbotweb.test.IntegrationTest'
     }
@@ -58,13 +68,6 @@ task integrationTest(type: Test) {
 integrationTest {
     useJUnit {
         includeCategories 'com.losd.reqbotweb.test.IntegrationTest'
-    }
-}
-
-tasks.withType(FindBugs) {
-    reports {
-        xml.enabled = false
-        html.enabled = true
     }
 }
 
