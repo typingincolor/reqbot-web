@@ -73,3 +73,33 @@
     padding-top: 10px;
     margin-bottom: 10px;
 }
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+  /* Margin bottom by footer height */
+  margin-bottom: 30px;
+}
+
+.footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    /* Set the fixed height of the footer here */
+    height: 30px;
+    background-color: #f5f5f5;
+    display: table;
+}
+
+#footer-text {
+    display: table-cell;
+    vertical-align: middle;
+}
+
+#version-info {
+    display: table-cell;
+    margin-right: 10px;
+}

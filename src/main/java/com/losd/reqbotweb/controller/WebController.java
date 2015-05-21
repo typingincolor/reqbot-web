@@ -2,9 +2,11 @@ package com.losd.reqbotweb.controller;
 
 import com.losd.reqbotweb.client.ReqbotClient;
 import com.losd.reqbotweb.client.ResponseNotFoundException;
+import com.losd.reqbotweb.config.GitConfiguration;
 import com.losd.reqbotweb.model.Response;
 import com.losd.reqbotweb.model.WebResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -42,6 +44,9 @@ public class WebController {
     @Autowired
     private ReqbotClient client = null;
 
+    @Autowired
+    private GitConfiguration git = null;
+
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public String index(Model model) {
@@ -52,6 +57,7 @@ public class WebController {
         }
 
         model.addAttribute("mode", "request");
+        model.addAttribute("git", git);
 
         return "index";
     }
@@ -62,6 +68,8 @@ public class WebController {
         model.addAttribute("bucket", bucket);
         model.addAttribute("buckets", client.getBuckets());
         model.addAttribute("requests", client.getByBucket(bucket));
+        model.addAttribute("git", git);
+
         return "bucket-view";
     }
 
@@ -71,6 +79,7 @@ public class WebController {
         model.addAttribute("tag", tag);
         model.addAttribute("tags", client.getTags());
         model.addAttribute("responses", client.getByTag(tag));
+        model.addAttribute("git", git);
 
         return "tag-view";
     }
@@ -84,6 +93,7 @@ public class WebController {
         }
 
         model.addAttribute("mode", "response");
+        model.addAttribute("git", git);
 
         return "index";
     }
@@ -93,6 +103,8 @@ public class WebController {
         try {
             Response result = client.getResponse(response);
             model.addAttribute("response", result);
+            model.addAttribute("git", git);
+
             return "response";
         } catch (ResponseNotFoundException e) {
             return "error";
@@ -102,6 +114,8 @@ public class WebController {
     @RequestMapping(value = "/responses/create", method = RequestMethod.GET)
     public String renderCreateReponse(Model model) {
         model.addAttribute("webResponse", new WebResponse());
+        model.addAttribute("git", git);
+
         return "create-response";
     }
 
@@ -110,6 +124,8 @@ public class WebController {
         Response result = client.save(webResponse);
 
         model.addAttribute("response", result);
+        model.addAttribute("git", git);
+
         return "redirect:/responses/" + result.getUuid();
     }
 }
