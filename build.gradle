@@ -15,8 +15,6 @@ apply plugin: 'jacoco'
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
-version = '1.0'
-
 repositories {
     jcenter()
 }
