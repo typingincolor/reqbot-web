@@ -1,0 +1,31 @@
+<html>
+<head>
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css" />
+
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
+    <script src="https://code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+
+    <!-- reqbot stylesheet -->
+    <link rel="stylesheet" type="text/css" th:href="@{/css/reqbot.css}" href="../static/css/reqbot.css" />
+</head>
+<body>
+<div class="container-fluid">
+    <div th:replace="fragments/top-nav"></div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <h1>I'm broken!!!</h1>
+
+            <ol>
+                <li th:text="${error}">error</li>
+                <li th:text="${status}">status</li>
+                <li th:text="${message}">message</li>
+            </ol>
+        </div>
+    </div>
+</div>
+</body>
+</html>
