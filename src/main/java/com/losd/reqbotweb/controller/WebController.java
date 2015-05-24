@@ -47,7 +47,6 @@ public class WebController {
     @Autowired
     private GitConfiguration git = null;
 
-
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public String index(Model model) {
         List<String> buckets = client.getBuckets();
