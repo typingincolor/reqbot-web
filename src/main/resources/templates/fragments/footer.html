@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<html>
 <head>
     <!-- Latest compiled and minified CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css" />
@@ -10,19 +10,13 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
 
     <!-- reqbot stylesheet -->
-    <link rel="stylesheet" type="text/css" th:href="@{/css/reqbot.css}" href="../static/css/reqbot.css" />
+    <link rel="stylesheet" type="text/css" th:href="@{/css/reqbot.css}" href="../../static/css/reqbot.css" />
 </head>
 <body>
-<div class="container-fluid">
-    <div th:replace="fragments/top-nav"></div>
-
-    <div class="row">
-        <div class="col-md-12">
-            <h2>Nothing to see here!</h2>
-        </div>
+<footer th:fragment="footer" class="footer">
+    <div id="footer-text">
+        <div class="text-muted pull-right" id="version-info">version: <span th:text="${git.shortCommitId}">commitid</span></div>
     </div>
-</div>
-
-<footer th:replace="fragments/footer"></footer>
+</footer>
 </body>
 </html>

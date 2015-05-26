@@ -22,6 +22,7 @@ repositories {
 configurations {
     all*.exclude group: 'logback'
     all*.exclude group: 'log4j'
+    compile.exclude module: "sping-boot-starter-tomcat"
 }
 
 findbugs {
@@ -31,9 +32,10 @@ findbugs {
 }
 
 dependencies {
-    compile 'com.google.code.gson:gson:2.3.1'
     compile 'org.springframework.boot:spring-boot-starter-web'
     compile 'org.springframework.boot:spring-boot-starter-thymeleaf'
+    compile 'org.springframework.boot:spring-boot-starter-undertow'
+    compile 'com.google.code.gson:gson:2.3.1'
     compile 'com.google.guava:guava:18.0'
     compile 'org.javassist:javassist:3.19.0-GA'
     compile 'com.mashape.unirest:unirest-java:1.4.5'
@@ -82,3 +84,33 @@ uploadArchives.dependsOn bootRepackage
 clean << {
     project.file('reqbot-web.jar').delete()
 }
+
+task generateGitProperties {
+    doLast {
+        try {
+            def shortRevision = 'git rev-parse --short HEAD'.execute().text.trim()
+            def revision = 'git rev-list --max-count 1 --timestamp HEAD'.execute().text.trim()
+            def timestamp = revision ? new java.util.Date(java.util.concurrent.TimeUnit.SECONDS.toMillis(revision.split(' ').first() as long)).format("yyyy-MM-dd'T'HH:mm:ssZ") : null
+
+            File resourcesDir = new File(project.getBuildDir(), 'resources/main')
+            File propertiesFile = new File(resourcesDir, 'git.properties')
+
+            if(timestamp) {
+                // The project may not have any resources, so create the directories and file
+                if(!propertiesFile.exists()) {
+                    resourcesDir.mkdirs()
+                    propertiesFile.createNewFile()
+                }
+            } else {
+                project.logger.info('Unable to generate Git properties file:  will try SOURCE_VERSION environment variable')
+                def env = System.getenv()
+                shortRevision = env['SOURCE_VERSION'].substring(0, 7);
+            }
+            propertiesFile.text = """git.short.commit.id=${shortRevision}"""
+        } catch (e) {
+            project.logger.error('Unable to generate Git properties file.', e)
+        }
+    }
+}
+
+project.tasks.jar.dependsOn('generateGitProperties')

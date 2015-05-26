@@ -1,5 +1,4 @@
-<!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<html>
 <head>
     <!-- Latest compiled and minified CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css" />
@@ -17,14 +16,16 @@
     <div th:replace="fragments/top-nav"></div>
 
     <div class="row">
-        <div class="col-md-2">
-            <div class="sidebar-nav" th:replace="fragments/response/side-bar(tag=${tag},tags=${tags})">sidebar</div>
-        </div>
-        <div class="col-md-10">
-            <div th:replace="fragments/response/response-list(responses=${responses})">request list</div>
+        <div class="col-md-12">
+            <h1>I'm broken!!!</h1>
+
+            <ol>
+                <li th:text="${error}">error</li>
+                <li th:text="${status}">status</li>
+                <li th:text="${message}">message</li>
+            </ol>
         </div>
     </div>
 </div>
-<footer th:replace="fragments/footer"></footer>
 </body>
 </html>
